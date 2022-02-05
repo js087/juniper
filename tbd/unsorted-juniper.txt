@@ -1,0 +1,24 @@
+Command ### Notes ### Device ### 
+show configuration interfaces xxxx ### ? ### EX-4200 - Switch ### 
+show interfaces xxxx terse ### Summary view of the interface including sub-interfaces ### MX960 - Router ### 
+show arp | match xxxx ### ARP entries on interface/sub-interface ### MX960 - Router ### 
+show interfaces irb.1000 ### IP info for that interface; useful for verifying management subnets. ### MX960 - Router ### 
+show configuration groups ? ### Looking at conf groups and verify VLANs (units) for VPLS/MPLS ### MX960 - Router ### 
+show vpls mac-table | match <MAC> ### Useful for verifying that MAC is being learned on far end of tunnel - supporting tunnel is operational ### MX960 - Router ### 
+show interface diagnostics optics <int> ### SFP light levels and thresholds. ### MX960 - Router ### 
+show l2vpn conn instance <group> local-site <xx> remote-site <xx> ### Allows you to look at VPLS tunnels health - local and remote portion optional ### MX960 - Router ### 
+show mpls lsp ### tunnel health? ### MX960 - Router ### 
+show configurations protocol mpls (sur.01) ### Verifying if LSP's are built ### MX960 - Router ### 
+show l2circuit conn interface <xxx> ### Similar to Cisco's sh l2vpn xcon ### MX960 - Router ### 
+show configuration protocols ### Drops config with protocol(s); can be tailored to specific, i.e. mpls ### MX960 - Router ### 
+show chassis hardware ### Shows all the SFP's in the Juniper - FPC1 | PIC0 | XCVR X = ge-1/0/x ### MX960 - Router ### 
+show interfaces terse | match xxxx ### Used with VLAN's typically - will show all interfaces participating in with that VLAN ### MX960 - Router ### 
+show configuration interfaces xxxx | display inheritance ### Display's interface inheritances of the specified interface; good for drilling down configuration groups. ### MX960 - Router ### 
+show configuration apply-groups ###  ###  ### 
+set interfaces <int/.sub-int> disable ### Disables Juniper port; just specifying int will kill physical port. Specifying sub-int will kill that sub-interface. ### MX960 - Router ### 
+show route protocol ### Possibly for finding labels? ###  ### 
+"request system configuration rescue save
+configure
+set chassis alarm management-ethernet link-down ignore
+commit and-quit ### Clearing alarms on an EX4200 series switch ### EX4200 - Switch ### "
+request pfe execute command "show syslog messages" target fpc5 ### Shows you syslogs of blade itself, e.g. fpc5 ### MX960 - Router ### 
