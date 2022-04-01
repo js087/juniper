@@ -1,4 +1,18 @@
-Command ### Notes ### Device ### 
+!Command ### Notes ### Device ###
+!bgp and routing
+show bgp summary ### similar output to Ciscos 'sh ip bgp all sum' ### mx204 and other juniper routing likely
+show bgp neighbor i.i.i.i ### similar to Ciscos 'sh ip bgp neighbor' ### mx204 and other juniper routing likely
+show route advertising-protocol bgp i.i.i.i #### similar to Cisco 'sh ip bgp advertised-routes i.i.i.i'; routes being advertised to neighbor ### mx204 and other juniper routing likely
+show route receive-protocol bgp i.i.i.i #### similar to Cisco 'sh ip bgp received-routes i.i.i.i'; routes being received from neighbor ### mx204 and other juniper routing likely
+show route protocol direct ### similar to Ciscos 'sh ip route connected' ### mx204 and other juniper routing likely
+show route protocol static ### similar to Ciscos 'sh ip route static' ### mx204 and other juniper routing likely
+show route table <table> ### these are common to see in ISP, MSP, and CDN spaces where multiple routing tables exist; alot of routing commands above can be run on a specific table ### mx204 and other juniper routing likely
+show policy <policy> ### probably closest aligns with Ciscos 'show route-map' ### mx204 and other juniper routing likely
+show configuration policy-options prefix-list <name> ### similar to Ciscos 'sh ip prefix-list' or something similar ### mx204 and other juniper routing
+
+
+
+!old, unsorted
 show configuration interfaces xxxx ### ? ### EX-4200 - Switch ### 
 show interfaces xxxx terse ### Summary view of the interface including sub-interfaces ### MX960 - Router ### 
 show arp | match xxxx ### ARP entries on interface/sub-interface ### MX960 - Router ### 
