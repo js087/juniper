@@ -1,5 +1,6 @@
 !Command ### Notes ### Device ###
 !bgp and routing
+show route <ipv4 or ipv6 prefix> ### similar to Ciscos 'show ip route <ipv4>' ### mx204 and other juniper routing likely
 show bgp summary ### similar output to Ciscos 'sh ip bgp all sum' ### mx204 and other juniper routing likely
 show bgp neighbor i.i.i.i ### similar to Ciscos 'sh ip bgp neighbor' ### mx204 and other juniper routing likely
 show route advertising-protocol bgp i.i.i.i #### similar to Cisco 'sh ip bgp advertised-routes i.i.i.i'; routes being advertised to neighbor ### mx204 and other juniper routing likely
