@@ -11,7 +11,8 @@ show route table <table> ### these are common to see in ISP, MSP, and CDN spaces
 show policy <policy> ### probably closest aligns with Ciscos 'show route-map' ### mx204 and other juniper routing likely
 show configuration policy-options prefix-list <name> ### similar to Ciscos 'sh ip prefix-list' or something similar ### mx204 and other juniper routing
 
-
+!operations
+show bgp summary | no-more | refresh 2 ### auto-refreshes every 2 seconds, can be used with other operation-type commands I suspect.
 
 !old, unsorted
 show configuration interfaces xxxx ### ? ### EX-4200 - Switch ### 
