@@ -1,9 +1,23 @@
 #2022 - July
-#QFX
 ##qfx5100; JunOS: 19.3R3.6
+- Trying to push mirrored traffic on same production link (without saturation risk) also duplicated packets due to mirroring at the parent interface-only (see next note about PFE limitation)
+-- This required a dedicated physical link for mirroring-only to prevent packet duplication
 - 'forwarding-options analyzer' appears to be limited by hardware (PFE?) in terms of packet mirroring in various ways
 -- Appears to only be able to mirror the parent interface despite having multiple sub-interfaces (tested with carrier-type switching configurations)
 --- Despite mirroring `ae0.1000` and `ae0.1001` sub-interfaces, upstream device was only mirroring to `ae0.1000` but both mirror receivers were seeing traffic of the entirety of `ae0`.
 --- Adding `ae0.1001` as an additional output source on upstream device resulted in packets being duplicated
 --- Could reference `ae0.1000` and `ae0.1001` as two separate mirror inputs, within two different analyzers, and use two different output interfaces to send the same mirrored traffic to two identical hosts. :shrug:
 - Attempted to use 'input' and 'output' vlan's for carrying mirrored traffic with no success on this either despite following Juniper's KB's.
+
+###qfx5100 config
+set interfaces ae0 flexible-vlan-tagging
+set interfaces ae0 encapsulation flexible-ethernet-services
+set interfaces ae0 unit 1000 family ethernet-switching interface-mode trunk
+set interfaces ae0 unit 1000 family ethernet-switching vlan members mirror-vlan-1
+set interfaces ae0 unit 1001 family ethernet-switching interface-mode trunk
+set interfaces ae0 unit 1001 family ethernet-switching vlan members mirror-vlan-2
+
+set forwarding-options analyzer mirror1 input ingress interface ae0.1000
+set forwarding-options analyzer mirror1 output interface ge-0/0/0
+set forwarding-options analyzer mirror2 input ingress interface ae0.1001
+set forwarding-options analyzer mirror2 output interface ge-0/0/1
