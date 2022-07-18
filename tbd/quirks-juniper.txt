@@ -1,0 +1,9 @@
+#2022 - July
+#QFX
+##qfx5100; JunOS: 19.3R3.6
+- 'forwarding-options analyzer' appears to be limited by hardware (PFE?) in terms of packet mirroring in various ways
+-- Appears to only be able to mirror the parent interface despite having multiple sub-interfaces (tested with carrier-type switching configurations)
+--- Despite mirroring `ae0.1000` and `ae0.1001` sub-interfaces, upstream device was only mirroring to `ae0.1000` but both mirror receivers were seeing traffic of the entirety of `ae0`.
+--- Adding `ae0.1001` as an additional output source on upstream device resulted in packets being duplicated
+--- Could reference `ae0.1000` and `ae0.1001` as two separate mirror inputs, within two different analyzers, and use two different output interfaces to send the same mirrored traffic to two identical hosts. :shrug:
+- Attempted to use 'input' and 'output' vlan's for carrying mirrored traffic with no success on this either despite following Juniper's KB's.
