@@ -1,0 +1,24 @@
+#2023 - July
+- This predated me, but came to light during a migration (again) on different hardware and for a different reason specific to the `mx204` platform - except with BGPv4 neighbors only.
+- This tied into a similar problem at this location in the past, except then it was a qfx5100, and instead of IPv4 BGP neighbors, it was only IPv6 BGP neighbors only.
+-- This case after a colleague had worked with JTAC for months on this issue discovering some sort of influx of NDPv6 requests causing IPv6 unicast neighbors to become unreachable and thus with aggressive BGP timers we'd exceed the hold timers and the season would drop.
+
+Purely for documentation sake - I don't know the specifics.
+you@device> show configuration | display set | match ddos 
+set system ddos-protection protocols arp aggregate bandwidth 5000
+set system ddos-protection protocols arp aggregate burst 1000
+set system ddos-protection protocols ndpv6 aggregate bandwidth 1200
+set system ddos-protection protocols ndpv6 aggregate fpc 0 bandwidth-scale 100
+set system ddos-protection protocols l3nhop aggregate bandwidth 1000
+set system ddos-protection protocols l3nhop aggregate burst 500
+
+#^ the above solved the issues for the bouncing BGPv6 neighbors at the time, and though we didn't see it at the time, it probably also stopped BGPv4 neighbors from bouncing as well with the `arp aggregate` parameters in place.
+
+#Verification
+you@device> show policer | grep arp 
+__default_arp_policer__                                 0                    0  <-- Not useful, but given those are `ddos-protection` profiles above, different set of commands
+
+#Operational commands to chase `ddos-protection` items
+show ddos-protection statistics
+show ddos-protection protocols
+show ddos-protection version
