@@ -1,0 +1,53 @@
+#2023 - July
+##mx204; 20.4R3-S7.2
+- After chasing random stuff for ~2-3 days with no clear indicator, a randoml Googling of the correct inclusion of words led to this article: https://lkhill.com/juniper-arp-policer/
+- Symptoms were:
+-- Inconsistent amount of time, IPv4 BGP neighbors would flap, could be 15 minutes, could be 6 hours - and anything in between
+-- We'd see periodically the mx204 go into `arp probe` mode, and we'd occasionally see packet loss to the unicast address of the host, but ONLY when this hiccup would occur across 1 of any dozens of servers
+-- Unclear the time, but Juniper (MX204) has a built-in default arp policer that will handle 150Kbps across ALL interfaces aggregated (this was the issue, we were getting more than this rate and it was choking out legit ARP requests)
+- This tied into a similar problem at this location in the past, except then it was a qfx5100, and instead of IPv4 BGP neighbors, it was only IPv6 BGP neighbors only.
+-- This case after a colleague had worked with JTAC for months on this issue discovering some sort of influx of NDPv6 requests causing IPv6 unicast neighbors to become unreachable and thus with aggressive BGP timers we'd exceed the hold timers and the season would drop.
+
+#The discovery that led to confirmation we were getting hit with `arp storms` causing our issues:
+set firewall policer arp_limit if-exceeding bandwidth-limit 1m
+set firewall policer arp_limit if-exceeding burst-size-limit 1m
+set firewall policer arp_limit then discard
+
+#Verification
+you@device> show policer | match arp 
+__default_arp_policer__                        3795762890             86207332  <-- default, this was incrementing by the 1000s every 5 seconds, BIG BAD
+arp_limit-$phyint.$unit-inet-arp                         978092                22661 <-- protections in place with 'arp_limit'; you can still see here we're getting slammed - this interface faced an Internet Exchange.
+arp_limit-$phyint.$unit-inet-arp                              0                    0
+  
+#To future proof the above on the `mx204` platform for our infrastructure based on 1) experience and 2) Juniper KBs for example:
+set firewall policer arp_limit if-exceeding bandwidth-limit 250k
+set firewall policer arp_limit if-exceeding burst-size-limit 7200
+set firewall policer arp_limit then discard
+
+set system ddos-protection traceoptions file ddos-protects
+set system ddos-protection traceoptions file size 1m
+set system ddos-protection traceoptions file files 5
+
+set system ddos-protection global flow-detection
+set system ddos-protection global violation-report-rate 10
+set system ddos-protection global flow-report-rate 10
+
+set system ddos-protection protocols arp aggregate bandwidth 5000
+set system ddos-protection protocols arp aggregate burst 1000
+
+set system ddos-protection protocols arp aggregate flow-level-bandwidth logical-interface 500
+set system ddos-protection protocols arp aggregate flow-level-bandwidth physical-interface 500
+set system ddos-protection protocols arp aggregate flow-level-detection subscriber on
+set system ddos-protection protocols arp aggregate flow-level-detection physical-interface on
+set system ddos-protection protocols arp aggregate flow-level-control logical-interface police
+set system ddos-protection protocols arp aggregate flow-level-control physical-interface police
+
+set system ddos-protection protocols ndpv6 aggregate bandwidth 2400
+set system ddos-protection protocols ndpv6 aggregate burst 580
+set system ddos-protection protocols ndpv6 aggregate fpc 0 bandwidth-scale 60
+set system ddos-protection protocols ndpv6 aggregate fpc 0 burst-scale 90
+
+#Apply this limiter towards any interface suspected/confirmed of causing ARP storms:
+set interfaces $phyint.$unit family inet policer arp arp_limit
+
+Thanks for the read!
