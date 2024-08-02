@@ -9,6 +9,28 @@
 - Affected models:
 -- EX Series: ex2200-48t-4g, ex2300-48t, ex4200-24t, ex4300-48t, ex4400-48t
 -- QFX Series: qfx5100-48s-6q, re-qfx5120-48y-8c (not tested, but suspected per Juniper Article)
+!Config example showing indicator as known during time of this note (8/2/2024):
+family inet6 {
+    filter routing-engine-v6 {
+        term re6-anchor-1 {
+            ##
+            ## Warning: statement ignored: unsupported platform ($juniper_device_model)
+            ##
+            then next term;
+        }
+        term re6-anchor-2 {
+            ##
+            ## Warning: statement ignored: unsupported platform ($juniper_device_model)
+            ##
+            then next term;
+        }
+        term re6-anchor-3 {
+            ##
+            ## Warning: statement ignored: unsupported platform ($juniper_device_model)
+            ##
+            then next term;
+        }
+*** subsequent rules performing explicit and implicit options, **THESE** do no get processed.
 
 #2022 - July
 ##qfx5100; JunOS: 19.3R3.6
