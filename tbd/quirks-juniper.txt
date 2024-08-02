@@ -1,3 +1,15 @@
+#2024 - August
+##Multiple QFX and EX familes; not isolated to any single JunOS version
+- Started with reorganizing firewall filter rules to protect routing engines via systematically placed 'anchor' rules with 'then next term' logic
+-- Upon implementing these changes with an 'anchor' rule at top of filter resulted in the routing engine to become exposed to the general internet (confirmed and tested via various external scanners).
+- Case opened with Juniper, they confirmed this is the anticipated behavior for QFX and all QFX family members with the exception of their QFX10k platform.
+-- Basically how the filter is loaded into TCAM and with a 'anchor, then next term' rule at top of filter list results in ***no processing of subsequent rules*** <--- THIS was the problem having rule at top-of-list/first-term.
+-- Article shared: https://supportportal.juniper.net/s/article/QFX-Next-term-option-not-available-on-QFX5k-when-configuring-firewall-filters?language=en_US
+- Testing the same 'anchor' rule ideology to various Juniper EX Series, I confirmed the same observed behavior as we did in the QFX family across various models:
+- Affected models:
+-- EX Series: ex2200-48t-4g, ex2300-48t, ex4200-24t, ex4300-48t, ex4400-48t
+-- QFX Series: qfx5100-48s-6q, re-qfx5120-48y-8c (not tested, but suspected per Juniper Article)
+
 #2022 - July
 ##qfx5100; JunOS: 19.3R3.6
 - Trying to push mirrored traffic on same production link (without saturation risk) also duplicated packets due to mirroring at the parent interface-only (see next note about PFE limitation)
